@@ -36,23 +36,72 @@ ________________________________________________
 ________________________________________________
 Problem 3(a)
 
+The output is the same as before:
+N       2.0
+b       4.0
+d       10.0
+i       2.0
+n       3.0
+t       3.5
 
+Also, the job execution is the same in before because we haven't added any
+parameters. 
 
-
+I ran it as "hadoop jar caseSensitiveToolRunner.jar stubs.AvgWordLength test_input test_output"
 ________________________________________________
 Problem 3(b)
 
+The output is different this time:
+b       4.0
+d       10.0
+i       2.0
+n       2.6666666666666665
+t       3.5
 
+The command line for the job execution was: 
 
+"hadoop jar caseSensitiveToolRunner.jar stubs.AvgWordLength -D
+caseSensitive=false test_input testNOTCASESENSITIVE_output"
+
+which was different from the earlier command line execution because you have
+to input the parameters "-D caseSensitive=false" unless you want it to be the
+default, which is "true".
+
+In the job execution, there is one more "read operation" for the non-caseSensitive job than the caseSensitive job. 
+
+Also, there were 60 Reduce output records for the non-caseSensitive and only
+35 for the caseSensitive. 
 
 ________________________________________________
 Problem 3(c)
 
+The command line for this implementation is:
 
+"hadoop jar caseSensitiveToolRunner.jar stubs.AvgWordLength -D
+caseSensitive=false shakespeare shakespeare_notCaseSensitive"
 
+It does matter the order in which you put the "-D caseSensitive=false". If I
+put it after the "output" I get the Usage error message:
+Usage: AvgWordLength [generic options] <input dir> <output dir>
 
+a       3.275899648342265
+w       4.373096283946263
+z       5.053333333333334
 ________________________________________________
 Problem 3(d)
 
+Without using the command line, you can set values of parameters using the
+configuration and passing it to the job in your Driver. 
 
+Example: 
+In your driver, you could do the following: 
+Configuration conf = new Configuration();
+conf.set("caseSensitive", false);
+Job job = new Job(conf);
 
+In your mapper, you could then do the following: 
+Configuration conf = context.getConfiguration();
+boolean isCaseSensitive = conf.get("caseSensitive");
+
+I prefer the command line interface so you can run the same jar file if you
+decide to change the parameters.
